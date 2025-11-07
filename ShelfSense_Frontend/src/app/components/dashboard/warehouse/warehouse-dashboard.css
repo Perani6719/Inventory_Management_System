@@ -1,0 +1,24 @@
+.warehouse-container {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header h3 {
+  margin-bottom: 4px;
+  font-size: 24px;
+  color: #007bff;
+}
+
+.dashboard-header p {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #555;
+}
+
+hr {
+  border-top: 1px solid #ddd;
+  margin-bottom: 24px;
+}

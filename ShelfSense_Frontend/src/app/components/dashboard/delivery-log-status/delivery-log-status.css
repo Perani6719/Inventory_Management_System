@@ -1,0 +1,31 @@
+.delivery-log-container {
+  padding: 16px;
+  background-color: #fdfdfd;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+}
+
+.delivery-log-container h4 {
+  margin-bottom: 8px;
+  color: #007bff;
+}
+
+.pagination-nav {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.page-item {
+  cursor: pointer;
+}
+
+.page-item.disabled .page-link {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.page-item.active .page-link {
+  background-color: #007bff;
+  color: white;
+}

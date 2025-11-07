@@ -1,0 +1,89 @@
+<div class="sidebar-container" *ngIf="!isWarehouse()">
+  <!-- Sidebar toggle button -->
+  <div class="sidebar-toggle">
+    <button class="toggle-btn" (click)="toggleSidebar.emit()">
+      <span *ngIf="isExpanded">&#x276E;</span>
+      <span *ngIf="!isExpanded">&#x276F;</span>
+    </button>
+  </div>
+
+  <!-- Sidebar content wrapper -->
+  <div class="sidebar-content">
+    <ul class="nav flex-column">
+      <!-- Product Mapping -->
+      <li *ngIf="isAdmin() || isManager() || isStaff()">
+        <a (click)="toggleInventory()" class="nav-link" title="Product Mapping">
+          🗂 <span class="label" *ngIf="isExpanded">ProductMapping</span>
+        </a>
+        <ul *ngIf="showInventory && isExpanded" class="nav flex-column ms-3 submenu show">
+          <li><a routerLink="/add-product" routerLinkActive="active">Add Product</a></li>
+          <li><a routerLink="/product-shelf" routerLinkActive="active">ProductShelf</a></li>
+          <li><a routerLink="/add-category" routerLinkActive="active">Add Category</a></li>
+          <li><a routerLink="/add-shelf" routerLinkActive="active">Add Shelf</a></li>
+          <li><a routerLink="/shelf-metrics" routerLinkActive="active">Shelf Metrics</a></li>
+        </ul>
+      </li>
+
+      <!-- Alerts -->
+      <li *ngIf="isAdmin() || isManager() || isStaff()">
+        <a (click)="toggleAlerts()" class="nav-link" title="Alerts">
+          🔔 <span class="label" *ngIf="isExpanded">Alerts</span>
+        </a>
+        <ul *ngIf="showAlerts && isExpanded" class="nav flex-column ms-3 submenu show">
+          <li><a routerLink="/predict-depletion" routerLinkActive="active">Predict Depletion</a></li>
+          <li><a routerLink="/replenishment-alerts" routerLinkActive="active">Replenishment Alerts</a></li>
+        </ul>
+      </li>
+
+      <!-- Stock Request -->
+      <li *ngIf="isAdmin() || isManager() || isStaff()">
+        <a (click)="toggleStockRequest()" class="nav-link" title="Stock Request">
+          📦 <span class="label" *ngIf="isExpanded">Stock Request</span>
+        </a>
+        <ul *ngIf="showStockRequest && isExpanded" class="nav flex-column ms-3 submenu show">
+          <li><a routerLink="/create-request-alert" routerLinkActive="active">Create Request from Alert</a></li>
+          <li><a routerLink="/all-requests" routerLinkActive="active">All Requests</a></li>
+          <li><a routerLink="/delivery-log" routerLinkActive="active">Delivery Log Status</a></li>
+        </ul>
+      </li>
+
+      <!-- Restock Task -->
+      <li *ngIf="isAdmin() || isManager() || isStaff()">
+        <a (click)="toggleRestockTaskMenu()" class="nav-link" title="Restock Tasks">
+          🔄 <span class="label" *ngIf="isExpanded">RestockTask</span>
+        </a>
+        <ul *ngIf="showRestockTaskMenu && isExpanded" class="nav flex-column ms-3 submenu show">
+          <li><a routerLink="/assign-tasks" routerLinkActive="active">Assign Tasks</a></li>
+          <li><a routerLink="/all-restock-tasks" routerLinkActive="active">All Restock Tasks</a></li>
+          <li><a routerLink="/organize-products" routerLinkActive="active">Organize Products</a></li>
+        </ul>
+      </li>
+
+      <!-- Staff Management -->
+      <li *ngIf="isAdmin() || isManager()">
+        <a (click)="toggleStaffMenu()" class="nav-link" title="Staff Management">
+          👥 <span class="label" *ngIf="isExpanded">Staff Management</span>
+        </a>
+        <ul *ngIf="showStaffMenu && isExpanded" class="nav flex-column ms-3 submenu show">
+          <li><a routerLink="/register" routerLinkActive="active">Add Staff</a></li>
+          <li><a routerLink="/view-staff" routerLinkActive="active">View Staff</a></li>
+        </ul>
+      </li>
+
+      <li *ngIf="isAdmin() || isManager() || isStaff()">
+          <a routerLink="/inventory-report" class="nav-link" title="Inventory Report">
+            📊 <span class="label" *ngIf="isExpanded">Inventory Report</span>
+          </a>
+      </li>
+
+    </ul> <br><br><br><br><br><br><br><br><br><br>
+
+    <!-- Logout button pinned to bottom -->
+    <div class="action-buttons text-center">
+      <button class="btn btn-danger w-100" (click)="logout()" title="Logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="label" *ngIf="isExpanded">Logout</span>
+      </button>
+    </div>
+  </div>
+</div>

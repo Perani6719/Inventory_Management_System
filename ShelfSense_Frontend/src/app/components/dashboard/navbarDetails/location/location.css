@@ -1,0 +1,65 @@
+.location-wrapper {
+  padding: 2rem;
+  background: linear-gradient(to right, #fdfbfb, #ebedee);
+  font-family: 'Segoe UI', sans-serif;
+  min-height: calc(100vh - 60px);
+}
+
+.page-title {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.location-card,
+.map-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.location-card::before,
+.map-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+  transition: left 0.4s ease;
+  z-index: -1;
+  opacity: 0.9;
+}
+
+.location-card:hover::before,
+.map-card:hover::before {
+  left: 0;
+}
+
+.location-card:hover,
+.map-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.location-card h2,
+.map-card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.location-card p {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}

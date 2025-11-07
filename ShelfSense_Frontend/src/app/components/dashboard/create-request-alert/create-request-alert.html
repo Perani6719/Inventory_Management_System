@@ -1,0 +1,82 @@
+<div class="alert-container">
+  <h3>Create Request from Alerts</h3>
+  
+  <div class="action-buttons">
+    <button class="btn btn-primary" (click)="createRequestsFromSelected()">Create Requests from Alerts</button>
+  </div>
+
+  <div class="alert alert-success mt-3" *ngIf="successMessage && !hasError">
+    {{successMessage}}
+  </div>
+  <div class="alert alert-danger mt-3" *ngIf="hasError">
+    {{serverMessage}}
+  </div>
+
+  <div class="request-list mt-3" *ngIf="createdRequests.length">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>RequestId</th>
+          <th>StoreId</th>
+          <th>ProductId</th>
+          <th>Quantity</th>
+          <th>RequestDate</th>
+          <th>RequestedDeliveryDate</th>
+          <th>AlertId</th>
+          <th>DeliveryStatus</th>
+          <th>ETA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let request of createdRequests">
+          <td>{{request.requestId}}</td>
+          <td>{{request.storeId}}</td>
+          <td>{{request.productId}}</td>
+          <td>{{request.quantity}}</td>
+          <td>{{request.requestDate | date:'short'}}</td>
+          <td>{{request.requestedDeliveryDate | date:'short'}}</td>
+          <td>{{request.alertId}}</td>
+          <td class="delivery-status-cell">
+            <span class="status-badge"
+                  [ngClass]="{
+                    'status-requested': request.deliveryStatus === 'requested',
+                    'status-in-transit': request.deliveryStatus === 'in-transit',
+                    'status-delivered': request.deliveryStatus === 'delivered',
+                    'status-cancelled': request.deliveryStatus === 'cancelled'
+                  }">
+              {{ request.deliveryStatus }}
+            </span>
+          </td>
+          <td>{{request.estimatedTimeOfArrival | date:'short'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert-list mt-3">
+    <table class="table table-striped" *ngIf="alerts.length">
+      <thead>
+        <tr>
+          <th>AlertId</th>
+          <th>Product</th>
+          <th>Suggested Order</th>
+          <th>Priority</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let alert of alerts">
+          <td>{{alert.id}}</td>
+          <td>{{alert.productName}}</td>
+          <td>{{alert.suggestedOrder}}</td>
+          <td><span [class]="getPriorityClass(alert.priority)">{{alert.priority}}</span></td>
+          <td>{{alert.lastUpdated | date:'short'}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!alerts.length" class="alert-card">
+      <p class="mb-0 text-muted">No alert-derived pending requests found.</p>
+    </div>
+  </div>
+</div>

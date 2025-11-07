@@ -1,0 +1,208 @@
+<!-- 🌿 Product Form -->
+<div class="product-form">
+  <h4><i class="fas fa-box-open me-2"></i> {{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h4>
+
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label><i class="fas fa-barcode me-2"></i> Stock Keeping Unit</label>
+      <input type="text" formControlName="stockKeepingUnit" />
+    </div>
+
+    <div class="form-group">
+      <label><i class="fas fa-tag me-2"></i> Product Name</label>
+      <input type="text" formControlName="productName" />
+    </div>
+
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select id="category" formControlName="categoryId">
+        <option [ngValue]="null">-- Select category --</option>
+        <option *ngFor="let c of categories" [ngValue]="c.categoryId">{{ c.categoryName }}</option>
+      </select>
+      <div *ngIf="f['categoryId'].touched && f['categoryId'].invalid" class="text-danger small">
+        Category is required
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label><i class="fas fa-boxes me-2"></i> Package Size</label>
+      <input type="text" formControlName="packageSize" />
+    </div>
+
+    <div class="form-group">
+      <label><i class="fas fa-balance-scale me-2"></i> Unit</label>
+      <input type="text" formControlName="unit" />
+    </div>
+
+    <!-- Image upload like category component -->
+    <div class="form-group">
+      <label>Product Image (optional)</label>
+      <input type="file" (change)="onImageSelected($event)" accept="image/*" />
+      <div class="text-muted small">Optional. Upload a product image (JPG, PNG).</div>
+      <div class="image-preview" *ngIf="selectedImagePreview">
+        <label class="small">Preview:</label>
+        <img [src]="selectedImagePreview" alt="Selected Image Preview" class="preview-thumb" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="productForm.invalid || isSubmitting">
+        <span *ngIf="isSubmitting"><i class="fas fa-spinner fa-spin me-2"></i> Saving...</span>
+        <span *ngIf="!isSubmitting">{{ isEditMode ? 'Update Product' : 'Add Product' }}</span>
+      </button>
+      <button *ngIf="isEditMode" type="button" class="btn-cancel" (click)="resetForm()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- 🔍 Filter Bar -->
+<div class="filter-bar-wrapper">
+  <div class="filter-bar">
+    <label for="filterInput">Search:</label>
+    <div class="filter-controls">
+      <input
+        id="filterInput"
+        type="text"
+        [(ngModel)]="filterText"
+        placeholder="Filter products..."
+        class="filter-input"
+      />
+      <button type="button" class="btn-clear-filter" (click)="filterText = ''" [disabled]="!filterText">
+        <i class="fas fa-times-circle"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 📊 Product Table -->
+<div class="category-table-container">
+  <div class="table-header-bar">
+    <h5>Existing Products ({{ filteredProducts.length }} total)</h5>
+    <button class="btn-load" (click)="loadProducts()" [disabled]="isLoadingProducts">
+      <span *ngIf="!isLoadingProducts">Reload Products</span>
+      <span *ngIf="isLoadingProducts"><i class="fas fa-spinner fa-spin me-2"></i> Loading...</span>
+    </button>
+  </div>
+
+  <table class="category-table" *ngIf="paginatedProducts.length > 0 && !isLoadingProducts">
+    <thead>
+      <tr>
+        <th class="sortable" (click)="sortBy('productId')">
+          ID
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'productId' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'productId' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'productId'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('stockKeepingUnit')">
+          SKU
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'stockKeepingUnit' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'stockKeepingUnit' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'stockKeepingUnit'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('productName')">
+          Name
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'productName' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'productName' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'productName'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('categoryId')">
+          Category
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'categoryId' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'categoryId' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'categoryId'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('packageSize')">
+          Package
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'packageSize' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'packageSize' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'packageSize'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('unit')">
+          Unit
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'unit' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'unit' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'unit'
+          }"></i>
+        </th>
+        <th>Image</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of paginatedProducts">
+        <td>{{ p.productId }}</td>
+        <td>{{ p.stockKeepingUnit }}</td>
+        <td>{{ p.productName }}</td>
+        <td>{{ p.categoryName || p.categoryId }}</td>
+        <td>{{ p.packageSize || '—' }}</td>
+        <td>{{ p.unit || '—' }}</td>
+        <td>
+          <div class="image-cell" *ngIf="p?.imageUrl">
+            <img [src]="p?.imageUrl" alt="{{ p.productName }}" class="category-image" />
+            <span class="eye-icon">
+              <i class="fas fa-eye"></i>
+              <div class="hover-popup">
+                <img [src]="p?.imageUrl" alt="{{ p.productName }} preview" />
+              </div>
+            </span>
+          </div>
+        </td>
+        <td>
+          <button class="btn-edit" (click)="openEditModal(p)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-delete" (click)="openDeleteModal(p.productId, p.productName)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="paginatedProducts.length === 0 && !isLoadingProducts" class="alert alert-info mt-3">
+    No matching products found.
+  </div>
+
+  <!-- ➡️ Pagination Controls -->
+  <div class="pagination-controls" *ngIf="filteredProducts.length > pageSize">
+    <div class="page-size-selector">
+      <label>Page Size:</label>
+      <select [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+    </div>
+
+    <div class="pagination-buttons">
+      <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+      <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🧨 Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+  <div class="modal-content delete-modal-content">
+    <h4>Confirm Deletion</h4>
+    <p>Are you sure you want to delete product <strong>{{ pendingDeleteName }}</strong>?</p>
+    <p class="text-danger small">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn-confirm" (click)="confirmDelete()">Yes, Delete</button>
+      <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+    </div>
+  </div>
+</div>
+

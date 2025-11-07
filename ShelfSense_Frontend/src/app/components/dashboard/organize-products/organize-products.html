@@ -1,0 +1,30 @@
+<div class="container mt-4">
+  <div class="card shadow-sm custom-card">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Organize Products</h4>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="onSubmit()" #organizeForm="ngForm">
+        <div class="mb-3">
+          <label for="staffId" class="form-label">Staff ID</label>
+          <input type="number" id="staffId" class="form-control"
+                 [(ngModel)]="staffId" name="staffId" required>
+        </div>
+        <div class="mb-3">
+          <label for="taskId" class="form-label">Task ID</label>
+          <input type="number" id="taskId" class="form-control"
+                 [(ngModel)]="taskId" name="taskId" required>
+        </div>
+        <button type="submit" class="btn btn-success w-100" [disabled]="!organizeForm.form.valid || loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          Submit
+        </button>
+      </form>
+ 
+      <div *ngIf="message" class="alert mt-3" [ngClass]="{'alert-success': success, 'alert-danger': !success}">
+        {{ message }}
+      </div>
+    </div>
+  </div>
+</div>
+ 

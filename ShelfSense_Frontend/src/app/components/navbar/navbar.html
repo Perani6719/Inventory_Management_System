@@ -1,0 +1,20 @@
+<nav class="navbar">
+  <div class="navbar-left">
+      <span class="title-arc" routerLink="/home" >ShelfSense</span>
+  </div>
+
+  <div class="navbar-right">
+    <button class="nav-toggle" (click)="toggleNavMenu()">
+      <span [innerHTML]="navMenuOpen ? '&#x2715;' : '&#9776;'"></span>
+    </button>
+
+    <div class="nav-links" [class.open]="navMenuOpen">
+      <a routerLink="/home">Home</a>
+      <a routerLink="/about">About Us</a>
+      <a routerLink="/location">Location</a>
+      <a routerLink="/reviews">Reviews</a>
+      <span class="role">Role: {{ userRole }}</span>
+      <img [src]="imageUrl" alt="Profile" class="profile-photo" />
+    </div>
+  </div>
+</nav>

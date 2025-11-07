@@ -1,0 +1,173 @@
+<!-- ✅ Unified Create/Edit Form -->
+<div class="category-form">
+  <h4>{{ isEditMode ? 'Edit Category' : 'Add New Category' }}</h4>
+
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Category Name</label>
+      <input type="text" formControlName="categoryName" placeholder="e.g. Snacks & Beverages" />
+      <div *ngIf="f['categoryName'].touched && f['categoryName'].invalid" class="text-danger small">
+        Required (max 100 characters)
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea formControlName="description" rows="3" placeholder="Optional description..."></textarea>
+    </div>
+
+    <!-- 🖼️ Image Upload Field -->
+    <div class="form-group">
+      <label>Category Image</label>
+      <input type="file" (change)="onImageSelected($event)" accept="image/*" />
+      <div class="text-muted small">Optional. Upload a category image (JPG, PNG).</div>
+
+      <!-- Preview when user selects a file or when editing and a server image exists -->
+      <div class="image-preview" *ngIf="selectedImagePreview">
+        <label class="small">Preview:</label>
+        <img [src]="selectedImagePreview" alt="Selected Image Preview" class="preview-thumb" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="categoryForm.invalid || isSubmitting">
+        <span *ngIf="!isSubmitting">
+          {{ isEditMode ? 'Update Category' : 'Create Category' }}
+        </span>
+        <span *ngIf="isSubmitting">
+          <i class="fas fa-spinner fa-spin me-2"></i> {{ isEditMode ? 'Updating...' : 'Creating...' }}
+        </span>
+      </button>
+
+      <button *ngIf="isEditMode" type="button" class="btn-cancel" (click)="resetForm()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- 🔍 Filter Bar (Right-Aligned) -->
+<div class="filter-bar-wrapper">
+  <div class="filter-bar">
+    <label for="filterInput">Search:</label>
+    <div class="filter-controls">
+      <input
+        id="filterInput"
+        type="text"
+        [(ngModel)]="filterText"
+        placeholder="Filter by name or description"
+        class="filter-input"
+      />
+      <button type="button" class="btn-clear-filter" (click)="filterText = ''" [disabled]="!filterText">
+        <i class="fas fa-times-circle"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Category Table -->
+<div class="category-table-container">
+  <div class="table-header-bar">
+    <h5>Existing Categories ({{ filteredCategories.length }} total)</h5>
+
+    <button class="btn-load" (click)="loadCategories()" [disabled]="isLoadingCategories">
+      <span *ngIf="!isLoadingCategories">
+        <i class="fas fa-sync-alt me-1"></i> Load
+      </span>
+      <span *ngIf="isLoadingCategories">
+        <i class="fas fa-spinner fa-spin me-2"></i> Loading...
+      </span>
+    </button>
+  </div>
+
+  <table class="category-table" *ngIf="paginatedCategories.length > 0 && !isLoadingCategories">
+    <thead>
+      <tr>
+        <th class="sortable" (click)="sortBy('id')">
+          ID <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'id' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'id' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'id'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('categoryName')">
+          Category Name <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'categoryName' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'categoryName' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'categoryName'
+          }"></i>
+        </th>
+        <th>Description</th>
+        <th>Image</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of paginatedCategories">
+        <td>{{ c.id || c.categoryId }}</td>
+        <td><strong>{{ c.categoryName }}</strong></td>
+        <td>{{ c.description || '—' }}</td>
+        <td>
+          <!-- Show small thumbnail if we have an image URL or a preview (editing) -->
+          <div class="image-cell" *ngIf="c.imageUrl || (isEditMode && selectedImagePreview)">
+            <img *ngIf="c.imageUrl" [src]="c.imageUrl" alt="{{ c.categoryName }}" class="category-image" />
+            <!-- Eye icon appears when hovering over thumbnail; popup handled by CSS -->
+            <span class="eye-icon" *ngIf="c.imageUrl">
+              <i class="fas fa-eye"></i>
+              <div class="hover-popup">
+                <img [src]="c.imageUrl" alt="{{ c.categoryName }} preview" />
+              </div>
+            </span>
+          </div>
+        </td>
+        <td>
+          <button class="btn-edit" (click)="openEditModal(c)" title="Edit {{ c.categoryName }}">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-delete" (click)="openDeleteModal(c.id || c.categoryId, c.categoryName)" title="Delete {{ c.categoryName }}">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="paginatedCategories.length === 0 && !isLoadingCategories" class="alert alert-info mt-3">
+    No matching categories found.
+  </div>
+
+  <div *ngIf="isLoadingCategories" class="alert alert-info mt-3">
+    <i class="fas fa-spinner fa-spin me-1"></i> Loading categories from server...
+  </div>
+
+  <!-- ➡️ Pagination Controls -->
+  <div class="pagination-controls" *ngIf="filteredCategories.length > pageSize">
+    <div class="page-size-selector">
+      <label>Page Size:</label>
+      <select [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+    </div>
+
+    <div class="pagination-buttons">
+      <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+      <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+  <div class="modal-content delete-modal-content">
+    <h4>Confirm Deletion</h4>
+    <p>Are you sure you want to delete <strong>{{ pendingDeleteName }}</strong> (ID: {{ pendingDeleteId }})?</p>
+    <p class="text-danger small">This action cannot be undone.</p>
+
+    <div class="modal-actions">
+      <button class="btn-confirm" (click)="confirmDelete()">Yes, Delete</button>
+      <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+    </div>
+  </div>
+</div>
+

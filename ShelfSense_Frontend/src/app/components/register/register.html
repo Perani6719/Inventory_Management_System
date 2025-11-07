@@ -1,0 +1,83 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div *ngIf="isLoadingOverlay" class="overlay">
+  <div class="spinner-overlay"></div>
+</div>
+
+<div class="register-form">
+  <h4><i class="fas fa-user-plus me-2 text-success"></i> Create Staff Account</h4>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <!-- Store ID -->
+    <div class="form-group">
+      <label><i class="fas fa-store me-1 text-success"></i> Store ID</label>
+      <input type="number" formControlName="storeId" />
+      <div *ngIf="f['storeId'].touched && f['storeId'].invalid" class="text-danger small">
+        Store ID is required.
+      </div>
+    </div>
+
+    <!-- Name -->
+    <div class="form-group">
+      <label><i class="fas fa-user me-1 text-success"></i> Name</label>
+      <input type="text" formControlName="name" />
+      <div *ngIf="f['name'].touched && f['name'].invalid" class="text-danger small">
+        Name is required and must be under 100 characters.
+      </div>
+    </div>
+
+    <!-- Role -->
+    <div class="form-group">
+      <label><i class="fas fa-user-tag me-1 text-success"></i> Role</label>
+      <select formControlName="role">
+        <option value="staff">Staff</option>
+        <option value="manager">Manager</option>
+      </select>
+      <div *ngIf="f['role'].touched && f['role'].invalid" class="text-danger small">
+        Role is required.
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label><i class="fas fa-envelope me-1 text-success"></i> Email</label>
+      <input type="email" formControlName="email" />
+      <div *ngIf="f['email'].touched && f['email'].invalid" class="text-danger small">
+        Enter a valid email address.
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label><i class="fas fa-lock me-1 text-success"></i> Password</label>
+      <div class="password-wrapper">
+        <input [type]="showPassword ? 'text' : 'password'" formControlName="passwordHash" />
+        <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword" (click)="togglePasswordVisibility()"></i>
+      </div>
+      <div *ngIf="f['passwordHash'].touched && f['passwordHash'].invalid" class="text-danger small">
+        Password is required (min 6 characters).
+      </div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="form-group">
+      <label><i class="fas fa-lock me-1 text-success"></i> Confirm Password</label>
+      <div class="password-wrapper">
+        <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" />
+        <i class="fas" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword" (click)="toggleConfirmPasswordVisibility()"></i>
+      </div>
+      <div *ngIf="registerForm.hasError('mismatch') && f['confirmPassword'].touched" class="text-danger small">
+        Passwords do not match.
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid || isLoadingOverlay">
+      <i class="fas fa-user-plus me-1"></i>
+      {{ isLoadingOverlay ? 'Registering...' : 'Register' }}
+    </button>
+  </form>
+
+  <div class="auth-footer">
+    <span class="text-muted">Already have an account?</span>
+    <a routerLink="/login"><i class="fas fa-sign-in-alt me-1"></i> Login here</a>
+  </div>
+</div>

@@ -1,0 +1,171 @@
+<!-- 🌿 Shelf Form -->
+<div class="shelf-form">
+  <h4><i class="fas fa-warehouse me-2"></i> {{ isEditMode ? 'Edit Shelf' : 'Add New Shelf' }}</h4>
+
+  <form [formGroup]="shelfForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="shelfCode">Shelf Code</label>
+      <input type="text" id="shelfCode" formControlName="shelfCode" />
+    </div>
+
+    <div class="form-group">
+      <label for="storeId">Store ID</label>
+      <input type="number" id="storeId" formControlName="storeId" />
+    </div>
+
+    <div class="form-group">
+      <label for="categoryId">Category</label>
+      <select id="categoryId" formControlName="categoryId">
+        <option [ngValue]="null">-- Select category --</option>
+        <option *ngFor="let c of categories" [ngValue]="c.categoryId">{{ c.categoryName }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="locationDescription">Location Description</label>
+      <input type="text" id="locationDescription" formControlName="locationDescription" />
+    </div>
+
+    <div class="form-group">
+      <label for="capacity">Capacity</label>
+      <input type="number" id="capacity" formControlName="capacity" />
+    </div>
+
+    <!-- Image upload field for shelf -->
+    <div class="form-group">
+      <label>Shelf Image (optional)</label>
+      <input type="file" (change)="onImageSelected($event)" accept="image/*" />
+      <div class="text-muted small">Optional. Upload a shelf image (JPG, PNG).</div>
+      <div class="image-preview" *ngIf="selectedImagePreview">
+        <label class="small">Preview:</label>
+        <img [src]="selectedImagePreview" alt="Selected Image Preview" class="preview-thumb" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="shelfForm.invalid || isSubmitting">
+        <span *ngIf="isSubmitting"><i class="fas fa-spinner fa-spin me-2"></i> Saving...</span>
+        <span *ngIf="!isSubmitting">{{ isEditMode ? 'Update Shelf' : 'Create Shelf' }}</span>
+      </button>
+      <button *ngIf="isEditMode" type="button" class="btn-cancel" (click)="resetForm()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- 🔍 Filter Bar -->
+<div class="filter-bar-wrapper">
+  <div class="filter-bar">
+    <label for="filterInput">Search:</label>
+    <div class="filter-controls">
+      <input
+        id="filterInput"
+        type="text"
+        [(ngModel)]="filterText"
+        placeholder="Filter shelves..."
+        class="filter-input"
+      />
+      <button type="button" class="btn-clear-filter" (click)="filterText = ''" [disabled]="!filterText">
+        <i class="fas fa-times-circle"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 📊 Shelf Table -->
+<div class="category-table-container">
+  <div class="table-header-bar">
+    <h5>Existing Shelves ({{ filteredShelves.length }} total)</h5>
+    <button class="btn-load" (click)="loadShelves()" [disabled]="isLoadingShelves">
+      <span *ngIf="!isLoadingShelves">Load Shelves</span>
+      <span *ngIf="isLoadingShelves"><i class="fas fa-spinner fa-spin me-2"></i> Loading...</span>
+    </button>
+  </div>
+
+  <table class="category-table" *ngIf="paginatedShelves.length > 0 && !isLoadingShelves">
+    <thead>
+      <tr>
+        <th class="sortable" (click)="sortBy('shelfId')">ID <i class="fas" [ngClass]="{
+          'fa-sort-up': sortColumn === 'shelfId' && sortDirection === 'asc',
+          'fa-sort-down': sortColumn === 'shelfId' && sortDirection === 'desc',
+          'fa-sort': sortColumn !== 'shelfId'
+        }"></i></th>
+        <th class="sortable" (click)="sortBy('shelfCode')">Code <i class="fas" [ngClass]="{
+          'fa-sort-up': sortColumn === 'shelfCode' && sortDirection === 'asc',
+          'fa-sort-down': sortColumn === 'shelfCode' && sortDirection === 'desc',
+          'fa-sort': sortColumn !== 'shelfCode'
+        }"></i></th>
+        <th class="sortable" (click)="sortBy('storeId')">Store</th>
+        <th class="sortable" (click)="sortBy('categoryId')">Category</th>
+        <th class="sortable" (click)="sortBy('locationDescription')">Location</th>
+        <th class="sortable" (click)="sortBy('capacity')">Capacity</th>
+        <th>Image</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of paginatedShelves">
+        <td>{{ s.shelfId }}</td>
+        <td>{{ s.shelfCode }}</td>
+        <td>{{ s.storeId }}</td>
+        <td>{{ s.categoryName || s.categoryId }}</td>
+        <td>{{ s.locationDescription || '—' }}</td>
+        <td>{{ s.capacity }}</td>
+        <td>
+          <div class="image-cell" *ngIf="s?.imageUrl">
+            <img [src]="s?.imageUrl" alt="{{ s.shelfCode }}" class="category-image" />
+            <span class="eye-icon">
+              <i class="fas fa-eye"></i>
+              <div class="hover-popup">
+                <img [src]="s?.imageUrl" alt="{{ s.shelfCode }} preview" />
+              </div>
+            </span>
+          </div>
+        </td>
+        <td>
+          <button class="btn-edit" (click)="openEditModal(s)" title="Edit">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-delete" (click)="openDeleteModal(s.shelfId, s.shelfCode)" title="Delete">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="paginatedShelves.length === 0 && !isLoadingShelves" class="alert alert-info mt-3">
+    No matching shelves found.
+  </div>
+
+  <!-- ➡️ Pagination Controls -->
+  <div class="pagination-controls" *ngIf="filteredShelves.length > pageSize">
+    <div class="page-size-selector">
+      <label>Page Size:</label>
+      <select [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+    </div>
+
+    <div class="pagination-buttons">
+      <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+      <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🧨 Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+  <div class="modal-content delete-modal-content">
+    <h4>Confirm Deletion</h4>
+    <p>Are you sure you want to delete shelf <strong>{{ pendingDeleteCode }}</strong>?</p>
+    <p class="text-danger small">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn-confirm" (click)="confirmDelete()">Yes, Delete</button>
+      <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+    </div>
+  </div>
+</div>
+

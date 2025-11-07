@@ -1,0 +1,67 @@
+<!-- ✅ Shelf Metrics Table -->
+<div class="category-table-container">
+  <div class="table-header-bar">
+    <h5>Shelf Metrics (Last 30 Days)</h5>
+
+    <button class="btn-load" (click)="loadMetrics()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">Reload Metrics ({{ metrics.length }})</span>
+      <span *ngIf="isLoading">
+        <i class="fas fa-spinner fa-spin me-2"></i> Loading...
+      </span>
+    </button>
+  </div>
+
+  <table class="category-table" *ngIf="metrics.length > 0 && !isLoading">
+    <thead>
+      <tr>
+        <th>Shelf Code</th>
+        <th>Capacity</th>
+        <th>Stock</th>
+        <th>Occupancy %</th>
+        <th>Products Assigned</th>
+        <th>Restocks (30d)</th>
+        <th>Avg Days Between Restocks</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of metrics">
+        <td>{{ m.shelfCode }}</td>
+        <td>{{ m.totalCapacity }}</td>
+        <td>{{ m.currentStock }}</td>
+        <td>{{ m.occupancyPercentage }}%</td>
+        <td>{{ m.totalProductsAssigned }}</td>
+        <td>{{ m.restockCountLast30Days }}</td>
+        <td>{{ m.averageDaysBetweenRestocks }}</td>
+        <td>
+         
+          <button class="btn-delete" (click)="openDeleteModal(m.shelfId, m.shelfCode)" title="Delete {{ m.shelfCode }}">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="metrics.length === 0 && !isLoading" class="alert-info">
+    No shelf metrics found. Click <strong>"Reload Metrics"</strong> to fetch data.
+  </div>
+
+  <div *ngIf="isLoading" class="alert-info">
+    <i class="fas fa-spinner fa-spin me-1"></i> Loading shelf metrics from server...
+  </div>
+</div>
+
+<!-- ✅ Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+  <div class="modal-content delete-modal-content">
+    <h4>Confirm Deletion</h4>
+    <p>Are you sure you want to delete shelf <strong>{{ pendingDeleteCode }}</strong> (ID: {{ pendingDeleteId }})?</p>
+    <p class="text-danger small">This action cannot be undone.</p>
+
+    <div class="modal-actions">
+      <button class="btn-confirm" (click)="confirmDelete()">Yes, Delete</button>
+      <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+    </div>
+  </div>
+</div>

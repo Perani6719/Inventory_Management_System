@@ -1,0 +1,25 @@
+<div class="home-wrapper">
+  <section class="welcome-section">
+    <h1>Welcome to <span class="brand">ShelfSense</span></h1>
+    <p class="greeting">Hello, <strong>{{ userRole }}</strong>! Select an action from the sidebar based on your role.</p>
+  </section>
+
+  <section class="quick-actions">
+    <h2>🚀 Quick Actions</h2>
+    <div class="action-buttons">
+      <button routerLink="/product-shelf">🗂 Product Mapping</button>
+      <button routerLink="/replenishment-alerts">🔔 View Alerts</button>
+      <button routerLink="/assign-tasks">📦 Restock Tasks</button>
+      <button routerLink="/register" *ngIf="userRole === 'manager'">👥 Staff Management</button>
+    </div>
+  </section>
+  <br>
+  <section class="recent-alerts">
+    <h2>🔔 Recent Alerts</h2>
+    <ul>
+      <li>⚠️ Low stock on Aisle 3</li>
+      <li>📋 Restock task assigned to Ravi</li>
+      <li>🆕 New product added to Shelf 7</li>
+    </ul>
+  </section>
+</div>

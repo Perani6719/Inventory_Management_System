@@ -1,0 +1,55 @@
+<div class="report-container">
+  <h3>📊 Inventory Stockout Report</h3>
+
+  <!-- Date Range Inputs -->
+  <div class="date-range">
+    <label>Start Date:</label>
+    <input type="date" [(ngModel)]="startDate" />
+    <label>End Date:</label>
+    <input type="date" [(ngModel)]="endDate" />
+    <button (click)="generateReport()" [disabled]="isLoading">Generate</button>
+    <button (click)="downloadPdf()" [disabled]="isLoading">
+      <i class="fas fa-file-pdf me-1"></i> Download PDF
+    </button>
+
+
+  </div>
+
+  <!-- Filter Input -->
+  <div class="filter-bar">
+    <input type="text" [(ngModel)]="filterText" placeholder="Filter by product or shelf..." />
+  </div>
+
+  <!-- Report Table -->
+  <table *ngIf="filteredItems.length > 0">
+    <thead>
+      <tr>
+        <th (click)="sortBy('productName')">Product</th>
+        <th (click)="sortBy('shelfLocation')">Shelf</th>
+        <th (click)="sortBy('stockoutCount')">Stockouts</th>
+        <th (click)="sortBy('avgReplenishmentTimeInHours')">Avg Time (hrs)</th>
+        <th (click)="sortBy('avgReplenishmentDelayInHours')">Delay (hrs)</th>
+        <th (click)="sortBy('shelfAvailabilityPercentage')">Availability (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of filteredItems">
+        <td>{{ item.productName }}</td>
+        <td>{{ item.shelfLocation }}</td>
+        <td>{{ item.stockoutCount }}</td>
+        <td>{{ item.avgReplenishmentTimeInHours | number:'1.2-2' }}</td>
+        <td>{{ item.avgReplenishmentDelayInHours | number:'1.2-2' }}</td>
+        <td>{{ item.shelfAvailabilityPercentage | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Empty or Loading States -->
+  <div *ngIf="filteredItems.length === 0 && !isLoading" class="empty-state">
+    No matching report items found.
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i> Generating report...
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<div class="reviews-wrapper">
+  <h1 class="page-title">User Reviews</h1>
+
+  <div class="review-grid">
+    <div class="review-card" *ngFor="let review of reviews">
+      <h2>{{ review.name }}</h2>
+      <p class="role">{{ review.role }}</p>
+      <p class="stars">
+        <ng-container *ngFor="let star of [1,2,3,4,5]">
+          <span [class.filled]="star <= review.rating">★</span>
+        </ng-container>
+      </p>
+      <p class="comment">“{{ review.comment }}”</p>
+      <p class="date">{{ review.date }}</p>
+    </div>
+  </div>
+</div>

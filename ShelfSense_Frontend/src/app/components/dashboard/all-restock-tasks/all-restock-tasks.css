@@ -1,0 +1,111 @@
+.all-restock-tasks-container {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  max-width: 900px;
+  margin: 2rem auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+.table th {
+  background: #f8f9fa;
+}
+.error {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+
+.no-tasks-message {
+  text-align: center;
+  font-style: italic;
+  margin-top: 1rem;
+  color: #666;
+}
+
+/* Status Colors */
+.status-pending {
+  color: #856404;
+  background-color: #fff3cd;
+  font-weight: bold;
+}
+
+
+.status-completed {
+  color: #155724;
+  background-color: #d4edda;
+  font-weight: bold;
+}
+
+.status-delayed {
+  color: #721c24;
+  background-color: #f8d7da;
+  font-weight: bold;
+}
+
+
+/* ✅ NEW: Filter styling */
+.filter-container {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Add a colored border around the entire table */
+table {
+  border: 2px solid #b7e4c7; /* Green border */
+  border-radius: 8px;        /* Rounded corners */
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Add border to table cells */
+th, td {
+  border: 1px solid #ccc; /* Light gray for inner borders */
+  padding: 8px;
+  text-align: center;
+}
+
+/* Optional: Different color for header */
+th {
+  background-color: #f4f4f4;
+  border-bottom: 2px solid #4CAF50;
+}
+
+h2 {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.section-box {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.divider {
+  margin: 20px 0;
+  border: 1px solid #ccc;
+}
+
+.pagination {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.pagination button {
+  margin: 0 5px;
+  padding: 5px 10px;
+}

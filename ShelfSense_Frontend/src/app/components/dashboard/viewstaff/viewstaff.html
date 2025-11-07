@@ -1,0 +1,55 @@
+<div class="staff-view-container">
+  <h4><i class="fas fa-users me-2"></i> Staff Directory</h4>
+ 
+  <div class="filter-bar-wrapper">
+    <div class="filter-bar">
+      <label for="filterInput">Search:</label>
+      <div class="filter-controls">
+        <input
+          id="filterInput"
+          type="text"
+          [(ngModel)]="filterText"
+          placeholder="Filter by name, email, role..."
+          class="filter-input"
+        />
+        <button type="button" class="btn-clear-filter" (click)="filterText = ''" [disabled]="!filterText">
+          <i class="fas fa-times-circle"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="reload-bar">
+    <button class="btn-reload" (click)="loadStaff()" [disabled]="isLoading">
+      <span *ngIf="!isLoading"><i class="fas fa-sync-alt me-1"></i> Reload Staff</span>
+      <span *ngIf="isLoading"><i class="fas fa-spinner fa-spin me-1"></i> Loading...</span>
+    </button>
+  </div>
+ 
+  <table class="staff-table" *ngIf="filteredStaff.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Store</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Email</th>
+       </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of filteredStaff">
+        <td>{{ s.staffId }}</td>
+        <td>{{ s.storeId }}</td>
+        <td>{{ s.name }}</td>
+        <td>{{ s.role }}</td>
+        <td>{{ s.email }}</td>
+       </tr>
+    </tbody>
+  </table>
+ 
+  <div *ngIf="filteredStaff.length === 0 && !isLoading" class="alert-info mt-3">
+    No matching staff found.
+  </div>
+</div>
+ 
+ 

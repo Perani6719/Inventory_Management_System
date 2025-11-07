@@ -1,0 +1,59 @@
+.requests-container {
+  padding: 16px;
+}
+
+.filters {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.request-list {
+  margin-top: 16px;
+}
+
+.request-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.delivery-status-cell {
+  text-align: center;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.status-requested {
+  background-color: #e3f2fd !important;
+  color: #1565c0 !important;
+}
+
+.status-in-transit {
+  background-color: #fff3e0 !important;
+  color: #ef6c00 !important;
+}
+
+.status-delivered {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+.status-cancelled {
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+}

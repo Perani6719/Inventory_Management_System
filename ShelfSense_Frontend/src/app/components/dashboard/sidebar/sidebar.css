@@ -1,0 +1,139 @@
+/* Sidebar container */
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  height: calc(100vh - 60px);
+  background-color: #1e1e2f;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease, left 0.3s ease;
+  z-index: 1050;
+  overflow: hidden;
+  width: 60px;
+}
+
+.sidebar.open {
+  width: 220px;
+}
+
+/* Mobile behavior */
+@media (max-width: 768px) {
+  .sidebar {
+    left: -220px;
+    width: 220px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+}
+
+/* Toggle button */
+.sidebar-toggle {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Sidebar content wrapper */
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Navigation list */
+.nav {
+  padding-left: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: white;
+  text-decoration: none;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+  border-radius: 6px;
+}
+
+.nav-link:hover,
+.nav-link.active,
+.submenu li a:hover,
+.submenu li a.active {
+  background-color: #2c2c3e !important;
+  color: white !important;
+  border: none;
+}
+
+.nav-link .label {
+  margin-left: 0.5rem;
+}
+
+/* Hide labels and submenu when collapsed */
+.sidebar:not(.open) .label,
+.sidebar:not(.open) .submenu li a {
+  display: none;
+}
+
+/* Submenu styles */
+.submenu {
+  padding-left: 1rem;
+  transition: max-height 0.3s ease;
+}
+
+.submenu.show {
+  max-height: 500px;
+}
+
+.submenu li a {
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  display: block;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+/* Logout button pinned to bottom */
+.action-buttons {
+  padding: 1rem;
+  margin-top: auto;
+}
+
+.btn-danger {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  width: 100%;
+  background-color: #d9534f;
+  border: none;
+  color: white;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-danger:hover {
+  background-color: #c9302c;
+}

@@ -1,0 +1,188 @@
+<!-- 🌿 Auto-Assign / Edit Form -->
+<div class="product-form">
+  <h4><i class="fas fa-magic me-2"></i> {{ isEditMode ? 'Edit Mapping' : 'Auto-Assign Product to Shelf' }}</h4>
+
+  <form [formGroup]="mappingForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label><i class="fas fa-box me-2"></i> Product</label>
+      <select formControlName="productId">
+        <option [ngValue]="null">-- Select product --</option>
+        <option *ngFor="let p of products" [ngValue]="p.productId">{{ p.productName }}</option>
+      </select>
+    </div>
+
+    <div class="form-group" *ngIf="isEditMode">
+      <label><i class="fas fa-layer-group me-2"></i> Shelf</label>
+      <select formControlName="shelfId">
+        <option [ngValue]="null">-- Select shelf --</option>
+        <option *ngFor="let s of shelves" [ngValue]="s.shelfId || s.id">{{ s.shelfName || s.name || s.label || (s.shelfId || s.id) }}</option>
+      </select>
+    </div>
+
+    <div class="form-group" *ngIf="!isEditMode">
+      <label><i class="fas fa-layer-group me-2"></i> Category</label>
+      <select formControlName="categoryId">
+        <option [ngValue]="null">-- Select category --</option>
+        <option *ngFor="let c of categories" [ngValue]="c.categoryId">{{ c.categoryName }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label><i class="fas fa-sort-numeric-up me-2"></i> Quantity</label>
+      <input type="number" formControlName="initialQuantity" placeholder="Enter Quantity" />
+    </div>
+
+    <div class="form-group">
+      <label><i class="fas fa-warehouse me-2"></i> Max Capacity</label>
+      <input type="number" formControlName="maxCapacity" placeholder="Enter Max Capacity" />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="mappingForm.invalid || isSubmitting">
+        <span *ngIf="isSubmitting"><i class="fas fa-spinner fa-spin me-2"></i> {{ isEditMode ? 'Updating...' : 'Assigning...' }}</span>
+        <span *ngIf="!isSubmitting">{{ isEditMode ? 'Update Mapping' : 'Auto Assign' }}</span>
+      </button>
+      <button *ngIf="isEditMode" type="button" class="btn-cancel" (click)="resetForm()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- 🔍 Filter Bar -->
+<div class="filter-bar-wrapper">
+  <div class="filter-bar">
+    <label for="filterInput">Search:</label>
+    <div class="filter-controls">
+      <input
+        id="filterInput"
+        type="text"
+        [(ngModel)]="filterText"
+        placeholder="Filter mappings..."
+        class="filter-input"
+      />
+      <button type="button" class="btn-clear-filter" (click)="filterText = ''" [disabled]="!filterText">
+        <i class="fas fa-times-circle"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 📊 Mapping Table -->
+<div class="category-table-container">
+  <div class="table-header-bar">
+    <h5>Product Shelf Mappings ({{ filteredMappings.length }} total)</h5>
+    <button class="btn-load" (click)="loadMappings()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">Load Mappings</span>
+      <span *ngIf="isLoading"><i class="fas fa-spinner fa-spin me-2"></i> Loading...</span>
+    </button>
+  </div>
+
+  <table class="category-table" *ngIf="paginatedMappings.length > 0 && !isLoading">
+    <thead>
+      <tr>
+        <th class="sortable" (click)="sortBy('productShelfId')">
+          ID
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'productShelfId' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'productShelfId' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'productShelfId'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('productId')">
+          Product
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'productId' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'productId' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'productId'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('shelfId')">
+          Shelf #
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'shelfId' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'shelfId' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'shelfId'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('quantity')">
+          Quantity
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'quantity' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'quantity' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'quantity'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('maxCapacity')">
+          Max Capacity
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'maxCapacity' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'maxCapacity' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'maxCapacity'
+          }"></i>
+        </th>
+        <th class="sortable" (click)="sortBy('lastRestockedAt')">
+          Restocked
+          <i class="fas" [ngClass]="{
+            'fa-sort-up': sortColumn === 'lastRestockedAt' && sortDirection === 'asc',
+            'fa-sort-down': sortColumn === 'lastRestockedAt' && sortDirection === 'desc',
+            'fa-sort': sortColumn !== 'lastRestockedAt'
+          }"></i>
+        </th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let entry of paginatedMappings">
+        <td>{{ entry.productShelfId }}</td>
+        <td>{{ entry.productName || entry.productId }}</td>
+        <td>{{ entry.shelfName || entry.shelfId || '—' }}</td>
+        <td>{{ entry.quantity }}</td>
+        <td>{{ entry.maxCapacity }}</td>
+        <td>{{ entry.lastRestockedAt | date: 'medium' }}</td>
+        <td>
+          <button class="btn-edit" (click)="openEditModal(entry)" title="Edit Mapping">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-delete" (click)="openDeleteModal(entry.productShelfId)" title="Delete Mapping">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="paginatedMappings.length === 0 && !isLoading" class="alert-info mt-3">
+    No matching mappings found.
+  </div>
+
+  <!-- ➡️ Pagination Controls -->
+  <div class="pagination-controls" *ngIf="filteredMappings.length > pageSize">
+    <div class="page-size-selector">
+      <label>Page Size:</label>
+      <select [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+    </div>
+
+    <div class="pagination-buttons">
+      <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+      <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🧨 Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+  <div class="modal-content delete-modal-content">
+    <h4>Confirm Deletion</h4>
+    <p>Are you sure you want to delete this mapping?</p>
+    <p class="text-danger small">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn-confirm" (click)="confirmDelete()">Yes, Delete</button>
+      <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+    </div>
+  </div>
+</div>
+

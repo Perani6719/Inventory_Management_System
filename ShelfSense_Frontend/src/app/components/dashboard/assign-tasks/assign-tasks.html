@@ -1,0 +1,11 @@
+<div class="assign-tasks-container">
+  <h2>Assign Restock Tasks</h2>
+  <button class="btn btn-primary" (click)="assignTasks()" [disabled]="loading">
+    {{ loading ? 'Assigning...' : 'Assign Tasks from Delivered Stock' }}
+  </button>
+  <div *ngIf="resultMessage" class="result-message mt-3">
+    {{ resultMessage }}
+  </div>
+</div>
+ 
+ 

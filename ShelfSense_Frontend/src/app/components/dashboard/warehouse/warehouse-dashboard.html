@@ -1,0 +1,29 @@
+<!-- 🌐 Top Header for Warehouse Dashboard -->
+<header class="top-header d-flex justify-content-between align-items-center px-4 py-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-center gap-3">
+    <span class="fs-3">🏬</span>
+    <h2 class="fw-bold text-dark m-0">Warehouse Operations</h2>
+  </div>
+  <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
+</header>
+
+<!-- 📦 Warehouse Dashboard Card -->
+<div class="warehouse-container card shadow-sm p-4 mt-4">
+  <div class="dashboard-header mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h4 class="fw-semibold text-primary mb-1">📦 Incoming Stock Requests</h4>
+        <p class="text-muted mb-0">
+          Review and manage requests assigned to this warehouse. Use the actions column to dispatch, deliver, or cancel.
+        </p>
+      </div>
+      <div>
+        <!-- Optional: Add filters or status badges here -->
+      </div>
+    </div>
+    <hr />
+  </div>
+
+  <!-- 🔄 Dynamic Request Table -->
+  <app-warehouse-requests></app-warehouse-requests>
+</div>

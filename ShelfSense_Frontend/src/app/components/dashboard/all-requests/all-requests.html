@@ -1,0 +1,90 @@
+<div class="requests-container">
+  <h3>All Stock Requests</h3>
+
+  <div class="filters">
+    <!-- 🔍 Filter by Request ID -->
+    <div class="form-group">
+      <input type="number" 
+             class="form-control" 
+             placeholder="Search by Request ID..."
+             [(ngModel)]="requestIdQuery"
+             (input)="applyFilters()" />
+    </div>
+
+    <!-- 📦 Filter by Delivery Status -->
+    <div class="form-group">
+      <select class="form-control" 
+              [(ngModel)]="statusFilter"
+              (change)="applyFilters()">
+        <option value="all">All Status</option>
+        <option value="requested">Requested</option>
+        <option value="in-transit">In Transit</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="request-list">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>RequestId</th>
+          <th>StoreId</th>
+          <th>ProductId</th>
+          <th>Quantity</th>
+          <th>RequestDate</th>
+          <th>RequestedDeliveryDate</th>
+          <th>AlertId</th>
+          <th>DeliveryStatus</th>
+          <th>ETA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let request of paginatedRequests">
+          <td>{{request.requestId}}</td>
+          <td>{{request.storeId}}</td>
+          <td>{{request.productId}}</td>
+          <td>{{request.quantity}}</td>
+          <td>{{request.requestDate | date:'short'}}</td>
+          <td>{{request.requestedDeliveryDate | date:'short'}}</td>
+          <td>{{request.alertId}}</td>
+          <td class="delivery-status-cell">
+            <span class="status-badge"
+                  [ngClass]="{
+                    'status-requested': request.deliveryStatus === 'requested',
+                    'status-in-transit': request.deliveryStatus === 'in-transit',
+                    'status-delivered': request.deliveryStatus === 'delivered',
+                    'status-cancelled': request.deliveryStatus === 'cancelled'
+                  }">
+              {{ request.deliveryStatus }}
+            </span>
+          </td>
+          <td>{{request.estimatedTimeOfArrival | date:'short'}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!paginatedRequests.length" class="request-card">
+      <p class="mb-0 text-muted">No requests found matching the current filters.</p>
+    </div>
+
+    <!-- ✅ Pagination Controls -->
+    <nav *ngIf="filteredRequests.length > pageSize" class="pagination-nav">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+          <a class="page-link">Previous</a>
+        </li>
+
+        <li class="page-item" *ngFor="let page of [].constructor(totalPages()); let i = index"
+            [class.active]="currentPage === i + 1" (click)="goToPage(i + 1)">
+          <a class="page-link">{{ i + 1 }}</a>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage === totalPages()" (click)="goToPage(currentPage + 1)">
+          <a class="page-link">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

@@ -1,0 +1,97 @@
+<h3 class="dashboard-heading">Alerts Dashboard</h3>
+ 
+<div class="category-table-container">
+ 
+ 
+<!-- Filter Bar -->
+<div class="filter-bar right-aligned-filter">
+  <!-- ✅ Urgency Checkboxes at the Top, Right-Aligned -->
+  <div class="urgency-options">
+    <label *ngFor="let level of urgencyLevels">
+      <input
+        type="checkbox"
+        [value]="level"
+        (change)="toggleUrgencyFilter(level.toLowerCase(), $event.target.checked)"
+      />
+      {{ level }}
+    </label>
+  </div>
+ 
+  <!-- ✅ Product ID Filter Below -->
+  <input
+    type="text"
+    placeholder="Filter by Product ID"
+    [(ngModel)]="filterProductId"
+    (input)="applyFilter()"
+    class="filter-input"
+  />
+</div>
+ 
+ 
+  <!-- Optional Cards (Commented Out) -->
+  <div class="dashboard-grid">
+    <!--
+    <div class="donut-card">
+      <div class="donut">
+        <div class="donut-center">{{ total }}</div>
+      </div>
+    </div>
+ 
+    <div class="stats-card">
+      <h6>Alerts Overview</h6>
+      <div *ngFor="let k of getUrgencyKeys()">
+        <div class="stat-row">
+          <strong>{{ k }}</strong> <span>{{ byUrgency[k] }}</span>
+        </div>
+      </div>
+    </div>
+    -->
+  </div>
+ 
+  <!-- Alerts Table -->
+  <table class="category-table" *ngIf="filteredAlerts.length > 0 && !isLoading">
+    <thead>
+      <tr>
+        <th>Alert ID</th>
+        <th>Product ID</th>
+        <th>Shelf ID</th>
+        <th>Predicted Depletion</th>
+        <th>Urgency</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of filteredAlerts">
+        <td>{{ a.alertId }}</td>
+        <td>{{ a.productId }}</td>
+        <td>{{ a.shelfId }}</td>
+        <td>{{ formatDate(a.predictedDepletionDate) }}</td>
+        <td>
+          <span [ngClass]="'urgency-' + a.urgencyLevel.trim().toLowerCase()">
+            {{ a.urgencyLevel }}
+          </span>
+        </td>
+        <td>{{ formatDate(a.createdAt) }}</td>
+      </tr>
+    </tbody>
+  </table>
+ 
+  <!-- No Data Message -->
+  <div *ngIf="filteredAlerts.length === 0 && !isLoading" class="alert-info">
+    No alerts found. Click Reload to fetch.
+  </div>
+ 
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="alert-info">
+    Loading alerts...
+  </div>
+ 
+  <!-- Reload Button -->
+  <div class="table-header-bar" style="margin-top: 1rem;">
+    <button class="btn-load" (click)="load()" [disabled]="isLoading">
+      Reload Alerts ({{ total }})
+    </button>
+  </div>
+</div>
+ 
+ 

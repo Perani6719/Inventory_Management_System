@@ -1,0 +1,66 @@
+<div class="requests-container">
+  <div *ngIf="loading" class="mb-3">Loading...</div>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+  <!-- ✅ Delivery Status Filter -->
+  <div class="filters mb-3">
+    <label for="statusFilter" class="form-label">Filter by Delivery Status:</label>
+    <select id="statusFilter" class="form-select w-auto d-inline-block"
+            [(ngModel)]="statusFilter"
+            (change)="applyFilters()">
+      <option value="all">All</option>
+      <option value="requested">Requested</option>
+      <option value="in-transit">In Transit</option>
+      <option value="delivered">Delivered</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+  </div>
+
+  <!-- ✅ Filtered Requests Table -->
+  <table class="table table-bordered table-striped" *ngIf="!loading && filteredRequests.length">
+    <thead>
+      <tr>
+        <th>RequestId</th>
+        <th>StoreId</th>
+        <th>ProductId</th>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>RequestDate</th>
+        <th>RequestedDeliveryDate</th>
+        <th>DeliveryStatus</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let request of filteredRequests">
+        <td>{{request.requestId}}</td>
+        <td>{{request.storeId}}</td>
+        <td>{{request.productId}}</td>
+        <td>{{request.productName}}</td>
+        <td>{{request.quantity}}</td>
+        <td>{{request.requestDate | date:'short'}}</td>
+        <td>{{request.requestedDeliveryDate | date:'short'}}</td>
+        <td>
+          <span class="status-badge"
+                [ngClass]="{
+                  'status-requested': request.deliveryStatus === 'requested',
+                  'status-in-transit': request.deliveryStatus === 'in-transit',
+                  'status-delivered': request.deliveryStatus === 'delivered',
+                  'status-cancelled': request.deliveryStatus === 'cancelled'
+                }">
+            {{request.deliveryStatus}}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-1" (click)="openDispatch(request)">Dispatch</button>
+          <button class="btn btn-sm btn-outline-success me-1" (click)="markDelivered(request)">Mark Delivered</button>
+          <button class="btn btn-sm btn-outline-danger" (click)="cancel(request)">Cancel</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && !filteredRequests.length" class="request-card">
+    <p class="mb-0 text-muted">No incoming requests found.</p>
+  </div>
+</div>

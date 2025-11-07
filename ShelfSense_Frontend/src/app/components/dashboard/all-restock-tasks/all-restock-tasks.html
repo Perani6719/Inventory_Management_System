@@ -1,0 +1,99 @@
+<div class="all-restock-tasks-container">
+  <h2>All Restock Tasks</h2>
+
+  <!-- Task ID Section -->
+  <div class="section-box">
+    <h3>Filter by Task ID</h3>
+    <div class="filter-container">
+      <label for="taskIdFilter">Enter Task ID:</label>
+      <input id="taskIdFilter" type="number" [(ngModel)]="taskIdFilter" (ngModelChange)="onTaskIdFilterChange()" placeholder="Enter Task ID" />
+    </div>
+
+    <table *ngIf="!loading && paginatedTasksTaskId.length" class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Task ID</th>
+          <th>Product ID</th>
+          <th>Shelf ID</th>
+          <th>Assigned To</th>
+          <th>Assigned At</th>
+          <th>Status</th>
+          <th>Quantity Restocked</th>
+          <th>Completed At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of paginatedTasksTaskId">
+          <td>{{ task.taskId }}</td>
+          <td>{{ task.productId }}</td>
+          <td>{{ task.shelfId }}</td>
+          <td>{{ task.assignedTo }}</td>
+          <td>{{ task.assignedAt | date: 'short' }}</td>
+          <td [ngClass]="getStatusClass(task.status)">{{ task.status }}</td>
+          <td>{{ task.quantityRestocked }}</td>
+          <td>{{ task.completedAt | date: 'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!loading && !paginatedTasksTaskId.length">No tasks found for Task ID.</div>
+
+    <!-- Pagination for Task ID -->
+    <div class="pagination" *ngIf="totalPagesTaskId > 1">
+      <button (click)="changePageTaskId(currentPageTaskId - 1)" [disabled]="currentPageTaskId === 1">Prev</button>
+      <span>Page {{ currentPageTaskId }} of {{ totalPagesTaskId }}</span>
+      <button (click)="changePageTaskId(currentPageTaskId + 1)" [disabled]="currentPageTaskId === totalPagesTaskId">Next</button>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <hr class="divider">
+
+  <!-- Status Section -->
+  <div class="section-box">
+    <h3>Filter by Status</h3>
+    <div class="filter-container">
+      <label for="statusFilter">Select Status:</label>
+      <select id="statusFilter" [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()">
+        <option value="">All</option>
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+        <option value="delayed">Delayed</option>
+      </select>
+    </div>
+
+    <table *ngIf="!loading && paginatedTasksStatus.length" class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Task ID</th>
+          <th>Product ID</th>
+          <th>Shelf ID</th>
+          <th>Assigned To</th>
+          <th>Assigned At</th>
+          <th>Status</th>
+          <th>Quantity Restocked</th>
+          <th>Completed At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of paginatedTasksStatus">
+          <td>{{ task.taskId }}</td>
+          <td>{{ task.productId }}</td>
+          <td>{{ task.shelfId }}</td>
+          <td>{{ task.assignedTo }}</td>
+          <td>{{ task.assignedAt | date: 'short' }}</td>
+          <td [ngClass]="getStatusClass(task.status)">{{ task.status }}</td>
+          <td>{{ task.quantityRestocked }}</td>
+          <td>{{ task.completedAt | date: 'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!loading && !paginatedTasksStatus.length">No tasks found for Status.</div>
+
+    <!-- Pagination for Status -->
+    <div class="pagination" *ngIf="totalPagesStatus > 1">
+      <button (click)="changePageStatus(currentPageStatus - 1)" [disabled]="currentPageStatus === 1">Prev</button>
+      <span>Page {{ currentPageStatus }} of {{ totalPagesStatus }}</span>
+      <button (click)="changePageStatus(currentPageStatus + 1)" [disabled]="currentPageStatus === totalPagesStatus">Next</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="layout-container" *ngIf="!isWarehouse()">
+  <app-navbar></app-navbar>
+
+  <!-- Mobile toggle button -->
+
+
+  <div class="content-section">
+    <div class="sidebar" [class.open]="sidebarOpen">
+      <app-sidebar [isExpanded]="sidebarOpen" (toggleSidebar)="toggleSidebar()"></app-sidebar>
+    </div>
+
+    <div class="main-content" [class.shifted]="sidebarOpen">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>
