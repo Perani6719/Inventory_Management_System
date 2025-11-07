@@ -1,0 +1,18 @@
+# Ignore Visual Studio files
+.vs/
+*.user
+*.suo
+
+# Ignore build artifacts
+bin/
+obj/
+
+
+# Ignore sensitive config files
+appsettings.json
+appsettings.Development.json
+
+
+# Ignore sensitive config files
+ShelfSense_Backend/ShelfSense.WebAPI/appsettings.json
+ShelfSense_Backend/ShelfSense.WebAPI/appsettings.Development.json
